@@ -1,0 +1,32 @@
+{
+  "name": "implode",
+  "version": "0.1.0",
+  "description": "",
+  "keywords": [],
+  "bugs": "https://github.com/yaroslav-korotaev/implode/issues",
+  "license": "MIT",
+  "author": "Yaroslav Korotaev <yaroslav.korotaev@gmail.com>",
+  "bin": {
+    "implode": "bin/implode"
+  },
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "repository": "yaroslav-korotaev/implode",
+  "scripts": {},
+  "dependencies": {
+    "@cspotcode/source-map-support": "^0.8.1",
+    "got": "^11.8.0",
+    "hurp-cli": "^0.1.0",
+    "js-yaml": "^4.1.0",
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.5",
+    "@types/lodash": "^4.14.182",
+    "@types/node": "^17.0.40",
+    "typescript": "^4.7.3"
+  }
+}
