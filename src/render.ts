@@ -52,8 +52,10 @@ export function renderJson(options: RenderJsonOptions): Json {
       const mergeKeys = Object.keys(merge);
       const prepare: Obj = {};
       
-      for (const key of mergeKeys) {
-        prepare[key] = renderJson({ source: merge[key], old: old[key], data });
+      for (const mergeKey of mergeKeys) {
+        const key = renderText(mergeKey, data);
+        
+        prepare[key] = renderJson({ source: merge[mergeKey], old: old[key], data });
       }
       for (const key of oldKeys) {
         if (prepare[key] == undefined) {

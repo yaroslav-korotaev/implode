@@ -14,10 +14,20 @@ export type FileConfig = {
   src: string;
   dest?: string;
   format?: FileFormat;
+  once?: boolean;
 };
 
+export type DirConfig = {
+  dir: string;
+};
+
+export type TaskConfig =
+  | FileConfig
+  | DirConfig
+;
+
 export type SourceConfig = {
-  files: FileConfig[];
+  tasks: TaskConfig[];
 }
 
 export type Config = {
@@ -30,10 +40,20 @@ export type File = {
   dest: string;
   format: FileFormat;
   content: string;
+  overwrite: boolean;
 };
+
+export type Dir = {
+  dir: string;
+};
+
+export type Task =
+  | File
+  | Dir
+;
 
 export type Source = {
   src: string;
   dest: string;
-  files: File[];
+  tasks: Task[];
 };

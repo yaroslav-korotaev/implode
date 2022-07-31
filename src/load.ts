@@ -1,11 +1,15 @@
 import * as path from 'path';
 import type {
+  Data,
   FileFormat,
+  FileConfig,
+  TaskConfig,
   SourceConfig,
   Config,
-  File,
+  Task,
   Source,
 } from './types';
+import { renderText } from './render';
 import { fromYaml } from './notations';
 import type { UberFileSystem } from './uber-fs';
 
@@ -57,30 +61,59 @@ export function detectFormat(url: string): FileFormat {
   return 'plain';
 }
 
+export function isFileTaskConfig(config: TaskConfig): config is FileConfig {
+  return !!(config as any).src;
+}
+
 export async function readConfig(path: string, fs: UberFileSystem): Promise<Config> {
   const content = await fs.load(path);
   
   return fromYaml(content) as Config;
 }
 
-export async function loadSource(url: string, rel: string, fs: UberFileSystem): Promise<Source> {
+export type LoadSourceOptions = {
+  rel: string;
+  data: Data;
+  fs: UberFileSystem;
+};
+
+export async function loadSource(url: string, options: LoadSourceOptions): Promise<Source> {
+  const {
+    rel,
+    data,
+    fs,
+  } = options;
+  
   const resolvedSourceUrl = ensureYaml(resolve(url, rel));
   const content = await fs.load(resolvedSourceUrl);
   const sourceConfig = fromYaml(content) as SourceConfig;
   
-  const files: File[] = [];
-  for (const fileConfig of sourceConfig.files) {
-    const src = resolve(fileConfig.src, resolvedSourceUrl);
-    const dest = resolve(fileConfig.dest ?? fileConfig.src, rel);
-    const format = fileConfig.format ?? detectFormat(src);
-    const content = await fs.load(src);
-    
-    files.push({ src, dest, format, content });
+  const tasks: Task[] = [];
+  for (const config of sourceConfig.tasks) {
+    if (isFileTaskConfig(config)) {
+      const src = resolve(config.src, resolvedSourceUrl);
+      const configDest = (config.dest) ? renderText(config.dest, data) : config.src;
+      const dest = resolve(configDest, rel);
+      const format = config.format ?? detectFormat(src);
+      const content = await fs.load(src);
+      
+      tasks.push({
+        src,
+        dest,
+        format,
+        content,
+        overwrite: !config.once,
+      });
+    } else {
+      const dir = resolve(renderText(config.dir, data), rel);
+      
+      tasks.push({ dir });
+    }
   }
   
   return {
     src: resolvedSourceUrl,
     dest: rel,
-    files,
+    tasks,
   };
 }

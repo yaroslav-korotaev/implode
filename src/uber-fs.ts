@@ -30,4 +30,8 @@ export class UberFileSystem {
   public async save(url: string, content: string): Promise<void> {
     await fs.writeFile(url, content, { encoding: 'utf8' });
   }
+  
+  public async mkdir(url: string): Promise<void> {
+    await fs.mkdir(url, { recursive: true });
+  }
 }

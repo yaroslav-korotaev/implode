@@ -23,6 +23,7 @@
         "src/types/*"
       ]
     },
+    "rootDir": "src",
     "sourceMap": true,
     "strict": true,
     "target": "es2022"
